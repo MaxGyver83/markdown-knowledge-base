@@ -17,11 +17,6 @@ type DocumentHandler struct {
 	storage    Storage
 }
 
-type CreateDocumentRequest struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
-}
-
 type DocumentListItem struct {
 	ID        int64     `json:"id"`
 	Title     string    `json:"title"`
