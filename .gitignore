@@ -1,0 +1,10 @@
+# SQLite database
+*.db
+*.sqlite
+*.sqlite3
+
+# Application data
+data/
+
+# Build artifacts
+/bin/
