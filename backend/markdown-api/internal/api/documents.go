@@ -164,7 +164,12 @@ func (h *DocumentHandler) Create(
 
 	w.WriteHeader(http.StatusCreated)
 
-	json.NewEncoder(w).Encode(doc)
+	json.NewEncoder(w).Encode(DocumentMetadata{
+		ID:        doc.ID,
+		Title:     doc.Title,
+		CreatedAt: doc.CreatedAt,
+		UpdatedAt: doc.UpdatedAt,
+	})
 }
 
 func (h *DocumentHandler) List(
@@ -294,7 +299,12 @@ func (h *DocumentHandler) Update(
 		"application/json",
 	)
 
-	json.NewEncoder(w).Encode(doc)
+	json.NewEncoder(w).Encode(DocumentMetadata{
+		ID:        doc.ID,
+		Title:     doc.Title,
+		CreatedAt: doc.CreatedAt,
+		UpdatedAt: doc.UpdatedAt,
+	})
 }
 
 func (h *DocumentHandler) Delete(
