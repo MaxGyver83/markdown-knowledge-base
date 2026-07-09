@@ -7,7 +7,6 @@ import (
 	"markdown-api/internal/documents"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -15,13 +14,6 @@ import (
 type DocumentHandler struct {
 	repository *documents.Repository
 	storage    Storage
-}
-
-type DocumentListItem struct {
-	ID        int64     `json:"id"`
-	Title     string    `json:"title"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func NewDocumentHandler(
@@ -186,10 +178,10 @@ func (h *DocumentHandler) List(
 		return
 	}
 
-	response := make([]DocumentListItem, 0, len(docs))
+	response := make([]DocumentMetadata, 0, len(docs))
 
 	for _, doc := range docs {
-		response = append(response, DocumentListItem{
+		response = append(response, DocumentMetadata{
 			ID:        doc.ID,
 			Title:     doc.Title,
 			CreatedAt: doc.CreatedAt,
