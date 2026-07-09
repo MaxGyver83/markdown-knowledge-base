@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"markdown-api/internal/documents"
 	"net/http"
 	"strconv"
@@ -13,6 +14,11 @@ import (
 type DocumentHandler struct {
 	repository *documents.Repository
 	storage    Storage
+}
+
+type CreateDocumentRequest struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
 
 func NewDocumentHandler(
@@ -85,4 +91,79 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 	)
 
 	json.NewEncoder(w).Encode(response)
+}
+
+func (h *DocumentHandler) Create(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	var req CreateDocumentRequest
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+
+	if err != nil {
+		http.Error(
+			w,
+			"invalid json"+err.Error(),
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	doc := documents.Document{
+		Title: req.Title,
+	}
+
+	err = h.repository.Create(&doc)
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not create document: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	doc.Filename = fmt.Sprintf(
+		"%d.md",
+		doc.ID,
+	)
+
+	err = h.storage.Save(
+		doc.Filename,
+		req.Content,
+	)
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not save file"+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	err = h.repository.UpdateFilename(
+		doc.ID,
+		doc.Filename,
+	)
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not update document"+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(doc)
 }

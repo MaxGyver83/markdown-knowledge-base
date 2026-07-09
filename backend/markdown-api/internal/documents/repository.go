@@ -3,6 +3,7 @@ package documents
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -96,18 +97,15 @@ func (r *Repository) Create(doc *Document) error {
 	result, err := r.db.Exec(`
 		INSERT INTO documents (
 			title,
-			filename,
 			created_at,
 			updated_at
 		)
-		VALUES (?, ?, ?, ?)
+		VALUES (?, ?, ?)
 	`,
 		doc.Title,
-		doc.Filename,
 		now,
 		now,
 	)
-
 	if err != nil {
 		return err
 	}
@@ -119,6 +117,7 @@ func (r *Repository) Create(doc *Document) error {
 	}
 
 	doc.ID = id
+	doc.Filename = fmt.Sprintf("%d.md", doc.ID)
 	doc.CreatedAt = now
 	doc.UpdatedAt = now
 
@@ -130,6 +129,24 @@ func (r *Repository) Delete(id int64) error {
 		DELETE FROM documents
 		WHERE id = ?
 	`,
+		id,
+	)
+
+	return err
+}
+
+func (r *Repository) UpdateFilename(
+	id int64,
+	filename string,
+) error {
+	_, err := r.db.Exec(`
+		UPDATE documents
+		SET filename = ?,
+		    updated_at = ?
+		WHERE id = ?
+	`,
+		filename,
+		time.Now(),
 		id,
 	)
 
