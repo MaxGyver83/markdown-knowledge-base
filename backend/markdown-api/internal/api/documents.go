@@ -47,7 +47,7 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, documents.ErrNotFound) {
 		http.Error(
 			w,
-			"document not found"+err.Error(),
+			err.Error(),
 			http.StatusNotFound,
 		)
 		return
