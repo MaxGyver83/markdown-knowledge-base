@@ -29,7 +29,7 @@ func NewRouter(
 		r.Get("/", handler.List)
 		r.Get("/{id}", handler.Get)
 		r.Post("/", handler.Create)
-		r.Delete("/{id}", deleteDocument)
+		r.Delete("/{id}", handler.Delete)
 	})
 
 	return r
@@ -39,10 +39,6 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, http.StatusOK, map[string]string{
 		"status": "ok",
 	})
-}
-
-func deleteDocument(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNoContent)
 }
 
 func jsonResponse(

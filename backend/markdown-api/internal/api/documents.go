@@ -205,3 +205,67 @@ func (h *DocumentHandler) List(
 		)
 	}
 }
+
+func (h *DocumentHandler) Delete(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	id, err := strconv.ParseInt(
+		chi.URLParam(r, "id"),
+		10,
+		64,
+	)
+
+	if err != nil {
+		http.Error(
+			w,
+			"invalid id",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	doc, err := h.repository.Get(id)
+
+	if errors.Is(err, documents.ErrNotFound) {
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusNotFound,
+		)
+		return
+	}
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not load document: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	err = h.storage.Delete(doc.Filename)
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not delete file: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	err = h.repository.Delete(id)
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not delete document: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
