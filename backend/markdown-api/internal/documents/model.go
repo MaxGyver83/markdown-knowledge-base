@@ -1,6 +1,11 @@
 package documents
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var ErrNotFound = errors.New("document not found")
 
 type Document struct {
 	ID        int64
