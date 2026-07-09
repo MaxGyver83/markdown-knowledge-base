@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"markdown-api/internal/api"
+	"markdown-api/internal/documents"
+	"markdown-api/internal/storage"
 )
 
 func main() {
@@ -21,7 +23,15 @@ func main() {
 		port = "8080"
 	}
 
-	router := api.NewRouter(logger)
+	repository := documents.NewRepository(db)
+
+	markdownStorage := storage.NewMarkdownStorage("./data/documents")
+
+	router := api.NewRouter(
+		logger,
+		repository,
+		markdownStorage,
+	)
 
 	server := &http.Server{
 		Addr:    ":" + port,

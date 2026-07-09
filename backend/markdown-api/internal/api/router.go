@@ -3,21 +3,31 @@ package api
 import (
 	"encoding/json"
 	"log/slog"
+	"markdown-api/internal/documents"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(logger *slog.Logger) http.Handler {
+func NewRouter(
+	logger *slog.Logger,
+	repository *documents.Repository,
+	storage Storage,
+) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(loggingMiddleware(logger))
 
 	r.Get("/health", healthHandler)
 
+	handler := NewDocumentHandler(
+		repository,
+		storage,
+	)
+
 	r.Route("/documents", func(r chi.Router) {
 		r.Get("/", listDocuments)
-		r.Get("/{id}", getDocument)
+		r.Get("/{id}", handler.Get)
 		r.Post("/", createDocument)
 		r.Delete("/{id}", deleteDocument)
 	})
@@ -33,14 +43,6 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 func listDocuments(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, http.StatusOK, []string{})
-}
-
-func getDocument(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-
-	jsonResponse(w, http.StatusOK, map[string]string{
-		"id": id,
-	})
 }
 
 func createDocument(w http.ResponseWriter, r *http.Request) {
