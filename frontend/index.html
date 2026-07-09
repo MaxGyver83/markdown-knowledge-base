@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Knowledge Base</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <h1>Knowledge Base</h1>
+        <button id="btn-new" class="btn-primary">+ New</button>
+      </div>
+      <div id="doc-list"></div>
+      <div id="sidebar-status"></div>
+    </aside>
+    <main id="content">
+      <div id="view">
+        <div class="empty-state">
+          <p>Select a document from the sidebar or create a new one.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script>
+    var API_BASE = 'http://localhost:8085';
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
