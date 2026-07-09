@@ -35,7 +35,7 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(
 			w,
-			"invalid id",
+			"invalid id"+err.Error(),
 			http.StatusBadRequest,
 		)
 		return
@@ -46,7 +46,7 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, documents.ErrNotFound) {
 		http.Error(
 			w,
-			"document not found",
+			"document not found"+err.Error(),
 			http.StatusNotFound,
 		)
 		return
@@ -55,7 +55,7 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(
 			w,
-			"internal error",
+			"internal error"+err.Error(),
 			http.StatusInternalServerError,
 		)
 		return
@@ -66,7 +66,7 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(
 			w,
-			"file missing",
+			"file missing"+err.Error(),
 			http.StatusInternalServerError,
 		)
 		return
