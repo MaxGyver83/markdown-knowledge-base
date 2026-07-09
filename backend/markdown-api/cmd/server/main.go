@@ -30,6 +30,24 @@ func main() {
 		os.Exit(1)
 	}
 
+	migrations, err := database.LoadMigrations()
+	if err != nil {
+		logger.Error("loading migrations failed",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+
+	err = database.Migrate(db, migrations)
+	if err != nil {
+		logger.Error(
+			"migration error",
+			"error",
+			err,
+		)
+		os.Exit(1)
+	}
+
 	repository := documents.NewRepository(db)
 
 	markdownStorage := storage.NewMarkdownStorage("./data/documents")
