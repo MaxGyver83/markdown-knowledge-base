@@ -7,6 +7,7 @@ import (
 	"markdown-api/internal/documents"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -204,6 +205,96 @@ func (h *DocumentHandler) List(
 			http.StatusInternalServerError,
 		)
 	}
+}
+
+func (h *DocumentHandler) Update(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	id, err := strconv.ParseInt(
+		chi.URLParam(r, "id"),
+		10,
+		64,
+	)
+
+	if err != nil {
+		http.Error(
+			w,
+			"invalid id",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	var req UpdateDocumentRequest
+
+	err = json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(
+			w,
+			"invalid json"+err.Error(),
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	doc, err := h.repository.Get(id)
+
+	if errors.Is(err, documents.ErrNotFound) {
+		http.Error(
+			w,
+			"document not found",
+			http.StatusNotFound,
+		)
+		return
+	}
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not load document: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	err = h.storage.Save(
+		doc.Filename,
+		req.Content,
+	)
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not save file: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	err = h.repository.Update(
+		id,
+		req.Title,
+	)
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not update document: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	doc.Title = req.Title
+	doc.UpdatedAt = time.Now()
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	json.NewEncoder(w).Encode(doc)
 }
 
 func (h *DocumentHandler) Delete(

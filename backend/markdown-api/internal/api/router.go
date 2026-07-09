@@ -29,6 +29,7 @@ func NewRouter(
 		r.Get("/", handler.List)
 		r.Get("/{id}", handler.Get)
 		r.Post("/", handler.Create)
+		r.Put("/{id}", handler.Update)
 		r.Delete("/{id}", handler.Delete)
 	})
 

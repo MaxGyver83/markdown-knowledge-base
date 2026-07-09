@@ -124,6 +124,24 @@ func (r *Repository) Create(doc *Document) error {
 	return nil
 }
 
+func (r *Repository) Update(
+	id int64,
+	title string,
+) error {
+	_, err := r.db.Exec(`
+		UPDATE documents
+		SET title = ?,
+		    updated_at = ?
+		WHERE id = ?
+	`,
+		title,
+		time.Now(),
+		id,
+	)
+
+	return err
+}
+
 func (r *Repository) Delete(id int64) error {
 	_, err := r.db.Exec(`
 		DELETE FROM documents
