@@ -7,6 +7,7 @@ import (
 	"markdown-api/internal/documents"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -19,6 +20,13 @@ type DocumentHandler struct {
 type CreateDocumentRequest struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
+}
+
+type DocumentListItem struct {
+	ID        int64     `json:"id"`
+	Title     string    `json:"title"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func NewDocumentHandler(
@@ -166,4 +174,44 @@ func (h *DocumentHandler) Create(
 	w.WriteHeader(http.StatusCreated)
 
 	json.NewEncoder(w).Encode(doc)
+}
+
+func (h *DocumentHandler) List(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	docs, err := h.repository.List()
+
+	if err != nil {
+		http.Error(
+			w,
+			"could not list documents: "+err.Error(),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	response := make([]DocumentListItem, 0, len(docs))
+
+	for _, doc := range docs {
+		response = append(response, DocumentListItem{
+			ID:        doc.ID,
+			Title:     doc.Title,
+			CreatedAt: doc.CreatedAt,
+			UpdatedAt: doc.UpdatedAt,
+		})
+	}
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(
+			w,
+			"could not encode response",
+			http.StatusInternalServerError,
+		)
+	}
 }

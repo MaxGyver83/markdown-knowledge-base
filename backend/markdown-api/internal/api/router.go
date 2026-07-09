@@ -26,7 +26,7 @@ func NewRouter(
 	)
 
 	r.Route("/documents", func(r chi.Router) {
-		r.Get("/", listDocuments)
+		r.Get("/", handler.List)
 		r.Get("/{id}", handler.Get)
 		r.Post("/", handler.Create)
 		r.Delete("/{id}", deleteDocument)
@@ -39,10 +39,6 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, http.StatusOK, map[string]string{
 		"status": "ok",
 	})
-}
-
-func listDocuments(w http.ResponseWriter, r *http.Request) {
-	jsonResponse(w, http.StatusOK, []string{})
 }
 
 func deleteDocument(w http.ResponseWriter, r *http.Request) {
