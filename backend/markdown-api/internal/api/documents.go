@@ -73,11 +73,14 @@ func (h *DocumentHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := map[string]any{
-		"id":       doc.ID,
-		"title":    doc.Title,
-		"filename": doc.Filename,
-		"content":  content,
+	response := DocumentResponse{
+		DocumentMetadata: DocumentMetadata{
+			ID:        doc.ID,
+			Title:     doc.Title,
+			CreatedAt: doc.CreatedAt,
+			UpdatedAt: doc.UpdatedAt,
+		},
+		Content: content,
 	}
 
 	w.Header().Set(
