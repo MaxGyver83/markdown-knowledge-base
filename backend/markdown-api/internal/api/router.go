@@ -16,6 +16,7 @@ func NewRouter(
 ) http.Handler {
 	r := chi.NewRouter()
 
+	r.Use(corsMiddleware)
 	r.Use(loggingMiddleware(logger))
 
 	r.Get("/health", healthHandler)
@@ -52,6 +53,21 @@ func jsonResponse(
 	w.WriteHeader(status)
 
 	_ = json.NewEncoder(w).Encode(data)
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func loggingMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
