@@ -33,6 +33,7 @@ func main() {
 	repository := documents.NewRepository(db)
 
 	markdownStorage := storage.NewMarkdownStorage("./data/documents")
+	markdownStorage.Init()
 
 	router := api.NewRouter(
 		logger,
