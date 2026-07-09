@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"markdown-api/internal/api"
+	"markdown-api/internal/database"
 	"markdown-api/internal/documents"
 	"markdown-api/internal/storage"
 )
@@ -21,6 +22,12 @@ func main() {
 	port := os.Getenv("HTTP_PORT")
 	if port == "" {
 		port = "8080"
+	}
+
+	db, err := database.Open("documents.db")
+	if err != nil {
+		logger.Error("database error", "error", err)
+		os.Exit(1)
 	}
 
 	repository := documents.NewRepository(db)
