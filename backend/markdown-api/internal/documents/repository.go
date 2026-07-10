@@ -97,12 +97,14 @@ func (r *Repository) Create(doc *Document) error {
 	result, err := r.db.Exec(`
 		INSERT INTO documents (
 			title,
+			filename,
 			created_at,
 			updated_at
 		)
-		VALUES (?, ?, ?)
+		VALUES (?, ?, ?, ?)
 	`,
 		doc.Title,
+		fmt.Sprintf("tmp_%d", now.UnixNano()),
 		now,
 		now,
 	)
