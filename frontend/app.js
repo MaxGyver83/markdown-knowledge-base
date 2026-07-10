@@ -1,4 +1,4 @@
-var API_BASE = window.API_BASE || 'http://localhost:8080';
+var API_BASE = window.API_BASE !== undefined ? window.API_BASE : 'http://localhost:8080';
 
 let documents = [];
 let currentId = null;
