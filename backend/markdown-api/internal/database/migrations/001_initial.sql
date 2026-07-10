@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS documents (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     filename TEXT NOT NULL UNIQUE,
-    created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL
 );

@@ -28,7 +28,7 @@ func (r *Repository) Get(id int64) (Document, error) {
 			created_at,
 			updated_at
 		FROM documents
-		WHERE id = ?
+		WHERE id = $1
 	`,
 		id,
 	).Scan(
@@ -94,31 +94,26 @@ func (r *Repository) List() ([]Document, error) {
 func (r *Repository) Create(doc *Document) error {
 	now := time.Now()
 
-	result, err := r.db.Exec(`
+	err := r.db.QueryRow(`
 		INSERT INTO documents (
 			title,
 			filename,
 			created_at,
 			updated_at
 		)
-		VALUES (?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id
 	`,
 		doc.Title,
 		fmt.Sprintf("tmp_%d", now.UnixNano()),
 		now,
 		now,
-	)
-	if err != nil {
-		return err
-	}
-
-	id, err := result.LastInsertId()
+	).Scan(&doc.ID)
 
 	if err != nil {
 		return err
 	}
 
-	doc.ID = id
 	doc.Filename = fmt.Sprintf("%d.md", doc.ID)
 	doc.CreatedAt = now
 	doc.UpdatedAt = now
@@ -132,9 +127,9 @@ func (r *Repository) Update(
 ) error {
 	_, err := r.db.Exec(`
 		UPDATE documents
-		SET title = ?,
-		    updated_at = ?
-		WHERE id = ?
+		SET title = $1,
+		    updated_at = $2
+		WHERE id = $3
 	`,
 		title,
 		time.Now(),
@@ -147,7 +142,7 @@ func (r *Repository) Update(
 func (r *Repository) Delete(id int64) error {
 	_, err := r.db.Exec(`
 		DELETE FROM documents
-		WHERE id = ?
+		WHERE id = $1
 	`,
 		id,
 	)
@@ -161,9 +156,9 @@ func (r *Repository) UpdateFilename(
 ) error {
 	_, err := r.db.Exec(`
 		UPDATE documents
-		SET filename = ?,
-		    updated_at = ?
-		WHERE id = ?
+		SET filename = $1,
+		    updated_at = $2
+		WHERE id = $3
 	`,
 		filename,
 		time.Now(),

@@ -61,7 +61,7 @@ func Migrate(
 
 		_, err = tx.Exec(`
 			INSERT INTO schema_migrations(version)
-			VALUES (?)
+			VALUES ($1)
 		`,
 			migration.Version,
 		)
@@ -89,7 +89,7 @@ func isApplied(
 	err := db.QueryRow(`
 		SELECT COUNT(*)
 		FROM schema_migrations
-		WHERE version = ?
+		WHERE version = $1
 	`,
 		version,
 	).Scan(&count)

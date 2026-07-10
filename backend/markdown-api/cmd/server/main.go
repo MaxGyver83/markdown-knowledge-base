@@ -24,7 +24,12 @@ func main() {
 		port = "8080"
 	}
 
-	db, err := database.Open("./data/documents.db")
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		databaseURL = "postgres://postgres:postgres@localhost:5432/markdownkb?sslmode=disable"
+	}
+
+	db, err := database.Open(databaseURL)
 	if err != nil {
 		logger.Error("database error", "error", err)
 		os.Exit(1)
