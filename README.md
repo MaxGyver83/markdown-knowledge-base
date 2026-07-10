@@ -27,3 +27,17 @@ serve
 ```
 
 (`serve` can be installed with `sudo npm install -g serve`)
+
+## Build and run with docker
+
+```sh
+cd infra
+docker compose up -d
+```
+
+### Stop
+
+```sh
+cd infra
+docker compose down
+```
