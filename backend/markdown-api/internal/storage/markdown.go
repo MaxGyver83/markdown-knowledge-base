@@ -3,6 +3,7 @@ package storage
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type MarkdownStorage struct {
@@ -30,6 +31,10 @@ func (s *MarkdownStorage) Save(
 		s.basePath,
 		filename,
 	)
+
+	if content != "" && !strings.HasSuffix(content, "\n") {
+		content += "\n"
+	}
 
 	return os.WriteFile(
 		path,
