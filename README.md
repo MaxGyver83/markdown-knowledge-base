@@ -3,6 +3,7 @@
 - Backend: REST API written in Go (using go-chi for routing)
 - Frontend: HMTL + Javascript + CSS
 - Database: PostgreSQL
+- Continuous Integration: GitHub Actions
 
 ## Build and run with Docker
 
