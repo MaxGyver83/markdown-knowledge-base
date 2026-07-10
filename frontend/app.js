@@ -174,6 +174,13 @@ async function renderForm(id) {
     </div>`;
 
   $('#btn-save').addEventListener('click', () => handleSave(id));
+
+  $('#doc-content').addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      handleSave(id);
+    }
+  });
 }
 
 function highlightSidebar() {
