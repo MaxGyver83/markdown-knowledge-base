@@ -24,7 +24,7 @@ func main() {
 		port = "8080"
 	}
 
-	db, err := database.Open("documents.db")
+	db, err := database.Open("./data/documents.db")
 	if err != nil {
 		logger.Error("database error", "error", err)
 		os.Exit(1)
