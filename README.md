@@ -2,33 +2,9 @@
 
 - Backend: REST API written in Go (using go-chi for routing)
 - Frontend: HMTL + Javascript + CSS
+- Database: PostgreSQL
 
-## How to test
-
-Start backend (REST API):
-
-```sh
-cd backend/markdown-api
-HTTP_PORT=8085 go run ./cmd/server
-```
-
-Start frontend (web server):
-
-```sh
-cd frontend
-python3 -m http.server 3000
-```
-
-or (if available):
-
-```sh
-cd frontend
-serve
-```
-
-(`serve` can be installed with `sudo npm install -g serve`)
-
-## Build and run with docker
+## Build and run with Docker
 
 ```sh
 cd infra
@@ -40,4 +16,13 @@ docker compose up -d
 ```sh
 cd infra
 docker compose down
+```
+
+## Rebuild
+
+Backend for example:
+
+```sh
+cd infra
+docker compose build backend
 ```
