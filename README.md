@@ -4,6 +4,7 @@
 - Frontend: HTML + Javascript + CSS
 - Database: PostgreSQL
 - CI/CD: GitHub Actions
+- Container: Docker / kind (Kubernetes in Docker)
 
 ## Build and run with Docker
 
@@ -27,3 +28,88 @@ Backend for example:
 cd infra
 docker compose build backend
 ```
+
+## Run with kind (Kubernetes in Docker)
+
+### Prerequisites
+
+- Docker installed
+- kind installed
+- kubectl installed
+
+### Setup
+
+```sh
+# 1. Create kind cluster (if not already present)
+#    kind-config.yaml maps NodePort 30080 to host port 30080
+kind create cluster --name markdownkb --config kubernetes/kind-config.yaml
+
+# 2a. Download Docker images
+docker pull ghcr.io/maxgyver83/markdown-knowledge-base/backend:latest
+docker pull ghcr.io/maxgyver83/markdown-knowledge-base/frontend:latest
+
+# 2b. If 2a fails, build Docker images yourself
+docker build -t ghcr.io/maxgyver83/markdown-knowledge-base/backend:latest backend/markdown-api
+docker build -t ghcr.io/maxgyver83/markdown-knowledge-base/frontend:latest frontend
+
+# 3. Load images into kind
+kind load docker-image \
+  ghcr.io/maxgyver83/markdown-knowledge-base/backend:latest \
+  ghcr.io/maxgyver83/markdown-knowledge-base/frontend:latest \
+  --name markdownkb
+
+# 4. Deploy everything
+kubectl apply -k kubernetes/
+
+# 5. Wait for Postgres to be ready
+kubectl wait --for=condition=ready pod -l app=postgres -n markdownkb --timeout=60s
+
+# 6. Access the frontend
+xdg-open http://localhost:30080
+```
+
+### Stop (data preserved)
+
+Pause the kind node container without data loss:
+
+```sh
+docker stop kind-markdownkb
+docker start kind-markdownkb
+```
+
+After `docker start`, Pods may need a moment until Postgres is ready.
+
+### Apply config updates
+
+```sh
+kubectl apply -k kubernetes/
+kubectl rollout restart -n markdownkb deploy/backend
+kubectl rollout restart -n markdownkb deploy/frontend
+```
+
+ConfigMap changes take effect after the rollout.
+
+### Teardown (data loss!)
+
+```sh
+# WARNING: PVC data is destroyed with the kind node container.
+kind delete cluster --name markdownkb
+```
+
+Optionally backup all data (database + markdown files) before deleting:
+
+```sh
+# Backup
+kubectl exec -n markdownkb deploy/postgres -- pg_dump -U postgres markdownkb > backup.sql
+kubectl exec -n markdownkb deploy/backend -- tar czf - -C /app/data . > markdown-backup.tar.gz
+
+# Restore (after `kind create cluster` + `kubectl apply -k kubernetes/`)
+kubectl exec -i -n markdownkb deploy/postgres -- psql -U postgres markdownkb < backup.sql
+kubectl exec -i -n markdownkb deploy/backend -- tar xzf - -C /app/data < markdown-backup.tar.gz
+```
+
+### Data persistence notes
+
+- **kind / minikube / k3d:** PVCs live inside the node container. `kind delete cluster` removes the container and all its data. `docker stop/start` preserves data.
+- **Cloud (AKS, EKS, GKE):** PVCs use cloud disks (Azure Disk, EBS, Persistent Disk) that survive cluster deletion.
+- **VPS with k3s / kubeadm:** Pod data lives directly on the host filesystem. Cluster restarts or pod deletions do not remove data.
