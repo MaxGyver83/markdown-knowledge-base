@@ -8,3 +8,7 @@ data/
 
 # Build artifacts
 /bin/
+
+# Backup
+/backup.sql
+/markdown-backup.tar.gz
