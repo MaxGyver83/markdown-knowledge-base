@@ -1,7 +1,7 @@
 # Markdown Knowledge Base
 
 - Backend: REST API written in Go (using go-chi for routing)
-- Frontend: HMTL + Javascript + CSS
+- Frontend: HTML + Javascript + CSS
 - Database: PostgreSQL
 - CI/CD: GitHub Actions
 
