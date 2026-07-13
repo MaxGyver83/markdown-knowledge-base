@@ -9,6 +9,9 @@ data/
 # Build artifacts
 /bin/
 
+# Generated Kubernetes secrets
+kubernetes/secret.yaml
+
 # Backup
 /backup.sql
 /markdown-backup.tar.gz

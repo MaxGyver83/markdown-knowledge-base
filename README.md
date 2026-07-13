@@ -58,13 +58,17 @@ kind load docker-image \
   ghcr.io/maxgyver83/markdown-knowledge-base/frontend:latest \
   --name markdownkb
 
-# 4. Deploy everything
+# 4. Generate Kubernetes secret (not tracked in git)
+#    Override with: POSTGRES_PASSWORD=mysecret ./kubernetes/make-secret.sh
+./kubernetes/make-secret.sh
+
+# 5. Deploy everything
 kubectl apply -k kubernetes/
 
-# 5. Wait for Postgres to be ready
+# 6. Wait for Postgres to be ready
 kubectl wait --for=condition=ready pod -l app=postgres -n markdownkb --timeout=60s
 
-# 6. Access the frontend
+# 7. Access the frontend
 xdg-open http://localhost:30080
 ```
 
