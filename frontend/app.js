@@ -91,6 +91,10 @@ function router() {
 /* -- Views -- */
 
 function renderEmpty() {
+  if (documents.length > 0) {
+    navigate(`/view/${documents[0].id}`);
+    return;
+  }
   currentId = null;
   highlightSidebar();
   $('#view').innerHTML = `
