@@ -5,6 +5,7 @@
 - Database: PostgreSQL
 - CI/CD: GitHub Actions
 - Container: Docker / kind (Kubernetes in Docker)
+- Infrastructure / Deployment: Terraform (AWS) + k3s on EC2
 
 ## Build and run with Docker
 
