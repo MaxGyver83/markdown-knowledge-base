@@ -12,10 +12,10 @@ metadata:
   name: postgres-secret
 type: Opaque
 data:
-  POSTGRES_USER: $(echo -n "$POSTGRES_USER" | base64)
-  POSTGRES_PASSWORD: $(echo -n "$POSTGRES_PASSWORD" | base64)
-  POSTGRES_DB: $(echo -n "$POSTGRES_DB" | base64)
-  DATABASE_URL: $(echo -n "postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB?sslmode=disable" | base64)
+  POSTGRES_USER: $(echo -n "$POSTGRES_USER" | base64 --wrap=0)
+  POSTGRES_PASSWORD: $(echo -n "$POSTGRES_PASSWORD" | base64 --wrap=0)
+  POSTGRES_DB: $(echo -n "$POSTGRES_DB" | base64 --wrap=0)
+  DATABASE_URL: $(echo -n "postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB?sslmode=disable" | base64 --wrap=0)
 EOF
 
 echo "Generated kubernetes/secret.yaml"
