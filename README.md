@@ -7,6 +7,8 @@
 - Container: Docker / kind (Kubernetes in Docker)
 - Infrastructure / Deployment: Terraform (AWS) + k3s on EC2
 
+Check this running instance of this project (at AWS): <http://63.178.0.65:30080/>
+
 ## Build and run with Docker
 
 ```sh
