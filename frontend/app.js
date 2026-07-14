@@ -243,8 +243,8 @@ async function handleDelete(id, title) {
   try {
     await API.delete(id);
     toast('Document deleted');
-    navigate('/');
     await loadSidebar();
+    navigate('/');
   } catch (e) {
     toast(e.message, 'error');
   }
@@ -256,8 +256,8 @@ async function handleReset() {
   try {
     await API.reset();
     toast('Demo documents restored');
-    navigate('/');
     await loadSidebar();
+    navigate('/');
   } catch (e) {
     toast(e.message, 'error');
   }
