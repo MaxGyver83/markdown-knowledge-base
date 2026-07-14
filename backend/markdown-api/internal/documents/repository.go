@@ -59,7 +59,7 @@ func (r *Repository) List() ([]Document, error) {
 			created_at,
 			updated_at
 		FROM documents
-		ORDER BY created_at DESC
+		ORDER BY created_at ASC
 	`)
 
 	if err != nil {
