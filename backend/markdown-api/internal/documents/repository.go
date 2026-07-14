@@ -159,7 +159,7 @@ func (r *Repository) Count() (int, error) {
 }
 
 func (r *Repository) DeleteAll() error {
-	_, err := r.db.Exec(`DELETE FROM documents`)
+	_, err := r.db.Exec(`TRUNCATE TABLE documents RESTART IDENTITY`)
 	return err
 }
 
