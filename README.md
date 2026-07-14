@@ -112,6 +112,64 @@ kubectl exec -i -n markdownkb deploy/postgres -- psql -U postgres markdownkb < b
 kubectl exec -i -n markdownkb deploy/backend -- tar xzf - -C /app/data < markdown-backup.tar.gz
 ```
 
+## Deploy to AWS with Terraform
+
+Deploy a t2.micro EC2 instance (AWS Free Tier) with k3s using Terraform.
+
+### Prerequisites
+
+- AWS CLI installed and configured (`aws configure`)
+- Terraform installed
+
+### Setup
+
+```sh
+cd terraform
+
+# Create the infrastructure
+./deploy.sh
+
+# Or step by step:
+terraform init
+terraform apply   # type "yes" when prompted
+```
+
+After `terraform apply`, the script:
+
+1. Creates: VPC, subnet, internet gateway, security group (SSH + k3s + frontend), EC2 (Debian 12, 8 GB gp3)
+2. Extracts the SSH key to `key.pem`
+3. Installs k3s on the EC2 instance via SSH
+4. Copies the kubeconfig locally as `kubeconfig.yaml`
+
+### Access
+
+```sh
+# SSH
+ssh -i terraform/key.pem admin@$(terraform -chdir=terraform output -raw public_ip)
+
+# kubectl
+export KUBECONFIG=$(pwd)/terraform/kubeconfig.yaml
+kubectl get nodes
+
+# Frontend
+open http://$(terraform -chdir=terraform output -raw public_ip):30080
+```
+
+### Deploy the app
+
+```sh
+export KUBECONFIG=$(pwd)/terraform/kubeconfig.yaml
+kubectl apply -k kubernetes/
+kubectl wait --for=condition=ready pod -l app=postgres -n markdownkb --timeout=60s
+```
+
+### Teardown
+
+```sh
+cd terraform
+terraform destroy   # removes everything: EC2, VPC, SG, key pair
+```
+
 ### Data persistence notes
 
 - **kind / minikube / k3d:** PVCs live inside the node container. `kind delete cluster` removes the container and all its data. `docker stop/start` preserves data.

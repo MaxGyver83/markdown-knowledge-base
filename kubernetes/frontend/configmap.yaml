@@ -4,8 +4,6 @@ metadata:
   name: nginx-config
 data:
   default.conf: |
-    resolver 10.96.0.10 valid=5s;
-
     server {
         listen 80;
         root /usr/share/nginx/html;
@@ -16,12 +14,10 @@ data:
         }
 
         location /health {
-            set $upstream_backend http://backend.markdownkb.svc.cluster.local:8080;
-            proxy_pass $upstream_backend;
+            proxy_pass http://backend:8080;
         }
 
         location /documents {
-            set $upstream_backend http://backend.markdownkb.svc.cluster.local:8080;
-            proxy_pass $upstream_backend;
+            proxy_pass http://backend:8080;
         }
     }
