@@ -26,7 +26,10 @@ func NewRouter(
 		storage,
 	)
 
+	resetHandler := NewResetHandler(logger, repository, storage)
+
 	r.Route("/documents", func(r chi.Router) {
+		r.Post("/reset", resetHandler.Reset)
 		r.Get("/", handler.List)
 		r.Get("/{id}", handler.Get)
 		r.Post("/", handler.Create)

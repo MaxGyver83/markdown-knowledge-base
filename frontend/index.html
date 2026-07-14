@@ -12,7 +12,10 @@
     <aside id="sidebar">
       <div class="sidebar-header">
         <h1>Knowledge Base</h1>
-        <button id="btn-new" class="btn-primary">+ New</button>
+        <div class="sidebar-buttons">
+          <button id="btn-new" class="btn-primary">+ New</button>
+          <button id="btn-reset" class="btn-reset">↺ Reset</button>
+        </div>
       </div>
       <div id="doc-list"></div>
       <div id="sidebar-status"></div>
@@ -28,6 +31,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: false });</script>
   <script>
     var API_BASE = 'http://localhost:8085';
   </script>

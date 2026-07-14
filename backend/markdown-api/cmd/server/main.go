@@ -58,6 +58,12 @@ func main() {
 	markdownStorage := storage.NewMarkdownStorage("./data/documents")
 	markdownStorage.Init()
 
+	err = api.SeedDatabase(logger, repository, markdownStorage)
+	if err != nil {
+		logger.Error("seed error", "error", err)
+		os.Exit(1)
+	}
+
 	router := api.NewRouter(
 		logger,
 		repository,

@@ -150,6 +150,19 @@ func (r *Repository) Delete(id int64) error {
 	return err
 }
 
+func (r *Repository) Count() (int, error) {
+	var count int
+	err := r.db.QueryRow(`
+		SELECT COUNT(*) FROM documents
+	`).Scan(&count)
+	return count, err
+}
+
+func (r *Repository) DeleteAll() error {
+	_, err := r.db.Exec(`DELETE FROM documents`)
+	return err
+}
+
 func (r *Repository) UpdateFilename(
 	id int64,
 	filename string,

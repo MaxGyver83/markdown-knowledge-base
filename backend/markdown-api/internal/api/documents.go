@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"markdown-api/internal/documents"
 	"net/http"
 	"strconv"
@@ -11,6 +12,46 @@ import (
 
 	"github.com/go-chi/chi/v5"
 )
+
+type ResetHandler struct {
+	logger     *slog.Logger
+	repository *documents.Repository
+	storage    Storage
+}
+
+func NewResetHandler(logger *slog.Logger, repository *documents.Repository, storage Storage) *ResetHandler {
+	return &ResetHandler{
+		logger:     logger,
+		repository: repository,
+		storage:    storage,
+	}
+}
+
+func (h *ResetHandler) Reset(w http.ResponseWriter, r *http.Request) {
+	if err := ResetDatabase(h.logger, h.repository, h.storage); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	docs, err := h.repository.List()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := make([]DocumentMetadata, 0, len(docs))
+	for _, doc := range docs {
+		response = append(response, DocumentMetadata{
+			ID:        doc.ID,
+			Title:     doc.Title,
+			CreatedAt: doc.CreatedAt,
+			UpdatedAt: doc.UpdatedAt,
+		})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
 
 type DocumentHandler struct {
 	repository *documents.Repository

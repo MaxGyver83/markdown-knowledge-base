@@ -31,16 +31,19 @@ body {
 .sidebar-header {
   padding: 16px;
   border-bottom: 1px solid #334155;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .sidebar-header h1 {
+  margin-bottom: 10px;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: #f1f5f9;
+}
+
+.sidebar-buttons {
+  display: flex;
+  gap: 6px;
 }
 
 #doc-list {
@@ -319,6 +322,23 @@ body {
 
 .btn-danger:hover {
   background: #dc2626;
+}
+
+.btn-reset {
+  padding: 8px 12px;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-reset:hover {
+  background: #334155;
+  color: #f1f5f9;
+  border-color: #64748b;
 }
 
 /* Loading */

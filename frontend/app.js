@@ -24,6 +24,7 @@ const API = {
   create: (data) => api('/documents', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => api(`/documents/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id) => api(`/documents/${id}`, { method: 'DELETE' }),
+  reset: () => api('/documents/reset', { method: 'POST' }),
 };
 
 function navigate(hash) {
@@ -125,7 +126,16 @@ async function renderDetail(id) {
       <div class="doc-content">${content}</div>`;
 
     $('#btn-delete').addEventListener('click', () => handleDelete(doc.id, doc.title));
-    $('#view').querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+    $('#view').querySelectorAll('pre code:not(.language-mermaid)').forEach(b => hljs.highlightElement(b));
+    document.querySelectorAll('pre code.language-mermaid').forEach(el => {
+      const div = document.createElement('div');
+      div.className = 'mermaid';
+      div.textContent = el.textContent;
+      el.parentElement.replaceWith(div);
+    });
+    if (document.querySelector('.mermaid')) {
+      mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+    }
   } catch (e) {
     view.innerHTML = `<div class="error">${escapeHtml(e.message)}</div>`;
   }
@@ -236,6 +246,19 @@ async function handleDelete(id, title) {
   }
 }
 
+async function handleReset() {
+  if (!confirm('Reset all documents? This will delete all documents and restore the demo documents.')) return;
+
+  try {
+    await API.reset();
+    toast('Demo documents restored');
+    navigate('/');
+    await loadSidebar();
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
 function formatDate(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', {
@@ -248,6 +271,7 @@ function formatDate(iso) {
 
 document.addEventListener('DOMContentLoaded', () => {
   $('#btn-new').addEventListener('click', () => navigate('/new'));
+  $('#btn-reset').addEventListener('click', handleReset);
   window.addEventListener('hashchange', router);
   loadSidebar().then(router);
 });
