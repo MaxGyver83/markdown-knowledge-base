@@ -80,8 +80,9 @@ xdg-open http://localhost:30080
 Pause the kind node container without data loss:
 
 ```sh
-docker stop kind-markdownkb
-docker start kind-markdownkb
+docker stop markdownkb-control-plane
+docker start markdownkb-control-plane
+kubectl wait --for=condition=ready pod -l app=postgres -n markdownkb --timeout=60s
 ```
 
 After `docker start`, Pods may need a moment until Postgres is ready.
