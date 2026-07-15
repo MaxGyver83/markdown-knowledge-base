@@ -140,3 +140,27 @@ jobs:
           tags: |
             ghcr.io/${{ env.REPO_LC }}/frontend:latest
             ghcr.io/${{ env.REPO_LC }}/frontend:${{ github.sha }}
+
+  deploy-aws:
+    needs: publish
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    env:
+      SSH_KEY: ${{ secrets.AWS_SSH_KEY }}
+      HOST: ${{ vars.AWS_HOST }}
+
+    steps:
+      - name: Deploy to k3s
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/aws_key
+          chmod 600 ~/.ssh/aws_key
+          ssh -o StrictHostKeyChecking=no \
+              -o UserKnownHostsFile=/dev/null \
+              -i ~/.ssh/aws_key \
+              ubuntu@$HOST << 'EOF'
+            sudo k3s kubectl rollout restart deployment/backend deployment/frontend -n markdownkb
+            sudo k3s kubectl rollout status deployment/backend -n markdownkb --timeout=120s
+            sudo k3s kubectl rollout status deployment/frontend -n markdownkb --timeout=120s
+          EOF
