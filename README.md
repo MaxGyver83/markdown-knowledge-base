@@ -156,7 +156,7 @@ export KUBECONFIG=$(pwd)/terraform/kubeconfig.yaml
 kubectl get nodes
 
 # Frontend
-open http://$(terraform -chdir=terraform output -raw public_ip):30080
+xdg-open http://$(terraform -chdir=terraform output -raw public_ip):30080
 ```
 
 ### Deploy the app
