@@ -154,10 +154,8 @@ jobs:
       - name: Deploy to k3s
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/aws_key
+          printf '%s' "$SSH_KEY" > ~/.ssh/aws_key
           chmod 600 ~/.ssh/aws_key
-          wc -c ~/.ssh/aws_key
-          ssh-keygen -y -f ~/.ssh/aws_key
           ssh -o StrictHostKeyChecking=no \
               -o UserKnownHostsFile=/dev/null \
               -i ~/.ssh/aws_key \
