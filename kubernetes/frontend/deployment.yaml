@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: ghcr.io/maxgyver83/markdown-knowledge-base/frontend:latest
+          image: ghcr.io/maxgyver83/markdown-knowledge-base/frontend:7b3afd41c316cbcabd95518c75cdb91edd619003
           imagePullPolicy: Always
           ports:
             - containerPort: 80

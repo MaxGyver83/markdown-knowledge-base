@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/maxgyver83/markdown-knowledge-base/backend:latest
+          image: ghcr.io/maxgyver83/markdown-knowledge-base/backend:7b3afd41c316cbcabd95518c75cdb91edd619003
           imagePullPolicy: Always
           env:
             - name: HTTP_PORT
