@@ -130,3 +130,16 @@ resource "aws_instance" "main" {
     Name = "${var.project_name}-server"
   }
 }
+
+resource "aws_eip" "main" {
+  domain = "vpc"
+
+  tags = {
+    Name = "${var.project_name}-eip"
+  }
+}
+
+resource "aws_eip_association" "main" {
+  instance_id   = aws_instance.main.id
+  allocation_id = aws_eip.main.id
+}
