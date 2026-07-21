@@ -66,4 +66,4 @@ graph TD
 |-------------|---------|-----|
 | Local (Docker) | `docker compose up -d` | http://localhost:8085 |
 | Local (kind) | `kubectl apply -n markdownkb -k kubernetes/` | http://localhost:30080 |
-| AWS (k3s) | `KUBECONFIG=terraform/kubeconfig.yaml kubectl apply -n markdownkb -k kubernetes/` | http://63.178.0.65:30080 |
+| AWS (k3s) | `KUBECONFIG=terraform/kubeconfig.yaml kubectl apply -n markdownkb -k kubernetes/` | http://3.78.199.120:30080 |
